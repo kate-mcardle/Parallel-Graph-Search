@@ -50,8 +50,8 @@ public class LockFreeBFS implements BreadthFirstSearch {
 			level++;
 			current = next; // all nodes at this level
 			next = new ConcurrentLinkedQueue<Integer>(); // all nodes at the next level
-			neighborThreadPool = Executors.newCachedThreadPool();
-			shortestHopThreadPool = Executors.newCachedThreadPool();
+			neighborThreadPool = Executors.newFixedThreadPool(4);
+			shortestHopThreadPool = Executors.newFixedThreadPool(4);
 			while (!current.isEmpty()) { // while we still have nodes to process at this level
 				int node = current.remove(); // pop the next node at this level
 				neighbors = new NeighborExecutor(node);

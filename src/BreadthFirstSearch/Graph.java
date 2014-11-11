@@ -1,11 +1,6 @@
 package BreadthFirstSearch;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /*
  * Density: (# nonzeros in adjacency matrix) / V*(V-1)
