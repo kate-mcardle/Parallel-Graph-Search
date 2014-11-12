@@ -1,8 +1,11 @@
-package BreadthFirstSearch;
+package breadth_first_search;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
+
+import auxillary_data_structures.Edge;
+import auxillary_data_structures.Graph;
 
 public class SequentialBFS implements BreadthFirstSearch {
 	private int[] shortest_hops;

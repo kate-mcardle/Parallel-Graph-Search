@@ -1,4 +1,4 @@
-package BreadthFirstSearch;
+package auxillary_data_structures;
 
 import java.util.Random;
 
@@ -8,9 +8,9 @@ import java.util.Random;
  */
 
 public class Graph_Adjacency_Matrix {
-	double[][] adjacency_matrix;
-	int n_nodes;
-	int n_edges;
+	public double[][] adjacency_matrix;
+	public int n_nodes;
+	public int n_edges;
 
 	public Graph_Adjacency_Matrix(double density, int n_nodes) {
 		this.n_nodes = n_nodes;

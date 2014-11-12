@@ -1,4 +1,4 @@
-package BreadthFirstSearch;
+package breadth_first_search;
 
 import java.util.Queue;
 import java.util.Set;
@@ -7,7 +7,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ParallelBFS implements BreadthFirstSearch {
+import auxillary_data_structures.Edge;
+import auxillary_data_structures.Graph;
+
+public class LockFreeBFS implements BreadthFirstSearch {
 	private ExecutorService neighborThreadPool;
 	private ExecutorService shortestHopThreadPool;
 
@@ -17,17 +20,11 @@ public class ParallelBFS implements BreadthFirstSearch {
 	private Queue<Integer> current;
 	private Queue<Integer> next;
 
-	public ParallelBFS(Graph graph, String type) {
+	public LockFreeBFS(Graph graph) {
 		this.graph = graph;
 		shortest_hops = new int[graph.n_nodes];
-		if (type.equals("lock-free")) {
-			this.current = new ConcurrentLinkedQueue<Integer>();
-			this.next = new ConcurrentLinkedQueue<Integer>();			
-		}
-		else {
-			this.current = new LockBasedQueue<Integer>();
-			this.next = new LockBasedQueue<Integer>();
-		}
+		this.current = new ConcurrentLinkedQueue<Integer>();
+		this.next = new ConcurrentLinkedQueue<Integer>();
 	}
 
 	@Override

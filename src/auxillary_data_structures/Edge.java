@@ -1,9 +1,9 @@
-package BreadthFirstSearch;
+package auxillary_data_structures;
 
 public class Edge {
-	int source;
-	int destination;
-	double weight;
+	public int source;
+	public int destination;
+	public double weight;
 
 	public Edge(int source, int destination, double weight) {
 		this.source = source;

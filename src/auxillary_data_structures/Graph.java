@@ -1,4 +1,4 @@
-package BreadthFirstSearch;
+package auxillary_data_structures;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,9 +13,9 @@ import java.util.Set;
 
 public class Graph {
 	
-	Map<Integer, Set<Edge>> adjacencyList;  
-	int n_nodes;
-	int n_edges;
+	public Map<Integer, Set<Edge>> adjacencyList;  
+	public int n_nodes;
+	public int n_edges;
 
 	public Graph(double density, int n_nodes) {
 		this.n_nodes = n_nodes;

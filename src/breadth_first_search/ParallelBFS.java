@@ -1,36 +1,35 @@
-package BreadthFirstSearch;
+package breadth_first_search;
 
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class LockFreeBFS_TwoThreadPools implements BreadthFirstSearch {
+import auxillary_data_structures.Edge;
+import auxillary_data_structures.Graph;
+
+public class ParallelBFS implements BreadthFirstSearch {
 	private ExecutorService neighborThreadPool;
 	private ExecutorService shortestHopThreadPool;
-	private int[] nonZeroRowCount;
 
-	private Graph_Adjacency_Matrix graph;
+	private Graph graph;
 	private int[] shortest_hops;
 	private int level = 0;
 	private Queue<Integer> current;
 	private Queue<Integer> next;
 
-	public LockFreeBFS_TwoThreadPools(Graph_Adjacency_Matrix graph) {
+	public ParallelBFS(Graph graph, String type) {
 		this.graph = graph;
 		shortest_hops = new int[graph.n_nodes];
-		this.current = new ConcurrentLinkedQueue<Integer>();
-		this.next = new ConcurrentLinkedQueue<Integer>();
-		this.nonZeroRowCount = new int[graph.n_nodes]; 
-		for (int i = 0; i < graph.n_nodes; i++) { // TODO : see if making this parallel improves performance
-			int nnz = 0;
-			for (int j = 0; j < graph.n_nodes; j++) {
-				if (graph.adjacency_matrix[i][j] != 0) {
-					nnz++;
-				}
-			}
-			nonZeroRowCount[i] = nnz;
+		if (type.equals("lock-free")) {
+			this.current = new ConcurrentLinkedQueue<Integer>();
+			this.next = new ConcurrentLinkedQueue<Integer>();			
+		}
+		else {
+			this.current = new LockBasedQueue<Integer>();
+			this.next = new LockBasedQueue<Integer>();
 		}
 	}
 
@@ -110,54 +109,14 @@ public class LockFreeBFS_TwoThreadPools implements BreadthFirstSearch {
 
 		@Override
 		public void run() {
-			for (int v = 0; v < graph.n_nodes; v++) {
-				if (graph.adjacency_matrix[node][v] != 0) { // for each neighbor of this node
-					if (shortest_hops[v] == Integer.MAX_VALUE) { // if we haven't discovered this node yet
-						next.add(v); // add it to the queue of nodes to investigate
-						shortest_hops[v] = level; // update its shortest_hops
-					} // evaluate that neighbor's shortest hops from source
+			Set<Edge> out_edges = graph.adjacencyList.get(node);
+			for (Edge e : out_edges) {// for each neighbor of this node
+				if (shortest_hops[e.destination] == Integer.MAX_VALUE) {// if we haven't discovered this node yet
+					shortest_hops[e.destination] = level;// add it to the queue of nodes to investigate
+					next.add(e.destination);// update its shortest_hops
 				}
 			}
 		}
 
 	}
-	
-	/*public class NeighborExecutor implements Runnable {
-
-		int node = -1;
-
-		public NeighborExecutor(int node) {
-			this.node = node;
-		}
-
-		@Override
-		public void run() {
-			ShortestHopExecutor shortestHop;
-			for (int v = 0; v < graph.n_nodes; v++) {
-				if (graph.adjacency_matrix[node][v] != 0) { // for each neighbor of this node
-					shortestHop = new ShortestHopExecutor(v);
-					shortestHopThreadPool.execute(shortestHop); // evaluate that neighbor's shortest hops from source
-				}
-			}
-		}
-
-	}*/
-
-	public class ShortestHopExecutor implements Runnable {
-		int v = -1;
-
-		public ShortestHopExecutor(int v) {
-			this.v = v;
-		}
-
-		@Override
-		public void run() {
-			if (shortest_hops[v] == Integer.MAX_VALUE) { // if we haven't discovered this node yet
-				next.add(v); // add it to the queue of nodes to investigate
-				shortest_hops[v] = level; // update its shortest_hops
-			}
-		}
-
-	}
-
 }

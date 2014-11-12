@@ -1,4 +1,4 @@
-package BreadthFirstSearch;
+package breadth_first_search;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class LockBasedQueue<T> implements Queue<T>{
+public class LockBasedQueue<T> implements Queue<T> {
 	ReentrantLock enqLock = new ReentrantLock();
 	ReentrantLock deqLock = new ReentrantLock();
 	private Queue<T> queue;
@@ -65,6 +65,7 @@ public class LockBasedQueue<T> implements Queue<T>{
 		return null;
 	}
 
+	@SuppressWarnings("hiding")
 	@Override
 	public <T> T[] toArray(T[] a) {
 		// TODO Auto-generated method stub
@@ -104,7 +105,7 @@ public class LockBasedQueue<T> implements Queue<T>{
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

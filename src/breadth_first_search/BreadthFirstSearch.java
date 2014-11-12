@@ -1,4 +1,4 @@
-package BreadthFirstSearch;
+package breadth_first_search;
 
 public interface BreadthFirstSearch {
 	
