@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Main {
 	public static void main(String[] args) {
 		long t = System.nanoTime();
-		Graph g = new Graph(0.5, 100000);
+		Graph g = new Graph(0.002, 100000);
 		//System.out.println("Graph\n"+ g.adjacencyList);
 		double t_graph = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
 		System.out.println("Time to build graph = " + t_graph + " seconds");
@@ -16,7 +16,14 @@ public class Main {
 		double t_seq = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
 		System.out.println("Time for sequential search = " + t_seq + " seconds");
 	//	System.out.println("Shortest hops\n"+ Arrays.toString(shortest_hops_seq));
+		
 		if (evaluate_search(shortest_hops_seq, "lock-free", g, 0)) {
+			System.out.println("match!");
+		} else {
+			System.out.println("Bug!! Not a match");
+		}
+		
+		if (evaluate_search(shortest_hops_seq, "lock-based", g, 0)) {
 			System.out.println("match!");
 		} else {
 			System.out.println("Bug!! Not a match");
@@ -26,13 +33,11 @@ public class Main {
 	public static boolean evaluate_search(int[] shortest_hops, String type, Graph g, int source) {
 		System.out.println("Evaluating " + type + " BFS");
 		BreadthFirstSearch bfs = null;
-		if (type.equals("lock-free")) {
-			bfs = new LockFreeBFS(g);
-		}
+		bfs = new ParallelBFS(g, type);
 		long t = System.nanoTime();
 		int[] shortest_hops_parallel = bfs.search(source);
 		double t_par = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
-		System.out.println("Time for parallel search = " + t_par + " seconds");
+		System.out.println("Time for parallel " + type + " search = " + t_par + " seconds");
 		return (Arrays.equals(shortest_hops, shortest_hops_parallel));
 	}
 

@@ -41,6 +41,10 @@ public class Graph {
 			
 		}
 	}
+	
+	public Graph(String graph_file) {
+		// read data from file, store in adjacencyList
+	}
 
 /*	public boolean add_edge(Double weight, int node_1, int node_2) {
 		adjacency_matrix[node_1][node_2] = weight;
