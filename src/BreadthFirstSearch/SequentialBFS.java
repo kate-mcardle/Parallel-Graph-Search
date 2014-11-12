@@ -2,6 +2,7 @@ package BreadthFirstSearch;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 public class SequentialBFS implements BreadthFirstSearch {
 	private int[] shortest_hops;
@@ -24,16 +25,16 @@ public class SequentialBFS implements BreadthFirstSearch {
 		q.add(source);
 		while (!q.isEmpty()) {
 			int u = q.remove();
-			for (int v = 0; v < graph.n_nodes; v++) {
-				if (graph.adjacency_matrix[u][v] != 0) {
-					if (shortest_hops[v] == Integer.MAX_VALUE) {
-						shortest_hops[v] = shortest_hops[u] + 1;
-						q.add(v);
-					}
+			Set<Edge> out_edges = graph.adjacencyList.get(u);
+			for (Edge e : out_edges) {
+				if (shortest_hops[e.destination] == Integer.MAX_VALUE) {
+					shortest_hops[e.destination] = shortest_hops[u] + 1;
+					q.add(e.destination);
 				}
 			}
 		}
 		return shortest_hops;
 	}
+	
 
 }

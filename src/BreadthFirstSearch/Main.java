@@ -5,7 +5,8 @@ import java.util.Arrays;
 public class Main {
 	public static void main(String[] args) {
 		long t = System.nanoTime();
-		Graph g = new Graph(0.5, 15000);
+		Graph g = new Graph(0.5, 100000);
+		//System.out.println("Graph\n"+ g.adjacencyList);
 		double t_graph = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
 		System.out.println("Time to build graph = " + t_graph + " seconds");
 		
@@ -14,7 +15,7 @@ public class Main {
 		int[] shortest_hops_seq = bfs_seq.search(0);
 		double t_seq = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
 		System.out.println("Time for sequential search = " + t_seq + " seconds");
-		
+	//	System.out.println("Shortest hops\n"+ Arrays.toString(shortest_hops_seq));
 		if (evaluate_search(shortest_hops_seq, "lock-free", g, 0)) {
 			System.out.println("match!");
 		} else {
