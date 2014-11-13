@@ -16,6 +16,15 @@ public class Graph {
 	public Map<Integer, Set<Edge>> adjacencyList;  
 	public int n_nodes;
 	public int n_edges;
+	
+	public Graph(int n_nodes) {
+		this.n_nodes = n_nodes;
+		n_edges = 0;
+		adjacencyList = new HashMap<Integer, Set<Edge>>();
+		for (int i = 0; i < n_nodes; i++) {
+			adjacencyList.put(i, new HashSet<Edge>());
+		}
+	}
 
 	public Graph(double density, int n_nodes) {
 		this.n_nodes = n_nodes;
@@ -46,9 +55,9 @@ public class Graph {
 		// read data from file, store in adjacencyList
 	}
 
-/*	public boolean add_edge(Double weight, int node_1, int node_2) {
-		adjacency_matrix[node_1][node_2] = weight;
-	}*/
+	public boolean add_edge(Edge e) {
+		return adjacencyList.get(e.source).add(e);
+	}
 
 	public static void main(String[] args) {
 		Graph g = new Graph(0.4, 5);

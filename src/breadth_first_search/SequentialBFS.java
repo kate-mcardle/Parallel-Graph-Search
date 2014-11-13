@@ -18,7 +18,7 @@ public class SequentialBFS implements BreadthFirstSearch {
 
 	@Override
 	public int[] search(int source) {
-		// Algorithm from CSAIL paper:
+		// Algorithm from CSAIL paper (Algorithm 1):
 		// http://supertech.csail.mit.edu/papers/pbfs.pdf
 		for (int i = 0; i < graph.n_nodes; i++) {
 			shortest_hops[i] = Integer.MAX_VALUE;

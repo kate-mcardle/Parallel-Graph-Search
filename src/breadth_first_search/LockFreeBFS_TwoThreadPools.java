@@ -38,7 +38,7 @@ public class LockFreeBFS_TwoThreadPools implements BreadthFirstSearch {
 
 	@Override
 	public int[] search(int source) {
-		// Algorithm from Ole Miss paper:
+		// Algorithm from Ole Miss paper (Algorithm 1):
 		// http://cs.olemiss.edu/heroes/papers/bfs.pdf
 
 		for (int i = 0; i < graph.n_nodes; i++) {
@@ -69,7 +69,7 @@ public class LockFreeBFS_TwoThreadPools implements BreadthFirstSearch {
 	}
 
 	public int[] search(int source, String type) {// with two thread pools
-		// Algorithm from Ole Miss paper:
+		// Algorithm from Ole Miss paper (Algorithm 1):
 		// http://cs.olemiss.edu/heroes/papers/bfs.pdf
 
 		for (int i = 0; i < graph.n_nodes; i++) {

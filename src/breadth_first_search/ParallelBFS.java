@@ -12,7 +12,6 @@ import auxillary_data_structures.Graph;
 
 public class ParallelBFS implements BreadthFirstSearch {
 	private ExecutorService neighborThreadPool;
-	private ExecutorService shortestHopThreadPool;
 
 	private Graph graph;
 	private int[] shortest_hops;
@@ -35,7 +34,7 @@ public class ParallelBFS implements BreadthFirstSearch {
 
 	@Override
 	public int[] search(int source) {
-		// Algorithm from Ole Miss paper:
+		// Algorithm from Ole Miss paper (Algorithm 1):
 		// http://cs.olemiss.edu/heroes/papers/bfs.pdf
 
 		for (int i = 0; i < graph.n_nodes; i++) {
@@ -58,40 +57,6 @@ public class ParallelBFS implements BreadthFirstSearch {
 			try {
 				neighborThreadPool.shutdown(); 
 				neighborThreadPool.awaitTermination(1, TimeUnit.DAYS); // wait until we have finished launching searches of all nodes at this level
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		return shortest_hops;
-	}
-
-	public int[] search(int source, String type) {// with two thread pools
-		// Algorithm from Ole Miss paper:
-		// http://cs.olemiss.edu/heroes/papers/bfs.pdf
-
-		for (int i = 0; i < graph.n_nodes; i++) {
-			shortest_hops[i] = Integer.MAX_VALUE;
-		}
-		shortest_hops[source] = level;
-
-		next.add(source);
-		NeighborExecutor neighbors;
-		while (!next.isEmpty()) {
-			level++;
-			current = next; // all nodes at this level
-			next = new ConcurrentLinkedQueue<Integer>(); // all nodes at the next level
-			neighborThreadPool = Executors.newFixedThreadPool(4);
-			shortestHopThreadPool = Executors.newFixedThreadPool(4);
-			while (!current.isEmpty()) { // while we still have nodes to process at this level
-				int node = current.remove(); // pop the next node at this level
-				neighbors = new NeighborExecutor(node);
-				neighborThreadPool.execute(neighbors); // find this node's neighbors
-			}
-			try {
-				neighborThreadPool.shutdown(); 
-				neighborThreadPool.awaitTermination(1, TimeUnit.DAYS); // wait until we have finished launching searches of all nodes at this level
-				shortestHopThreadPool.shutdown();
-				shortestHopThreadPool.awaitTermination(1, TimeUnit.DAYS); // wait until we have finished updating all the neighbors of all the nodes at this level
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
