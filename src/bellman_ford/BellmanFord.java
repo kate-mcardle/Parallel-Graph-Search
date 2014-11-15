@@ -9,6 +9,6 @@ public class BellmanFord {
 	Edge[] edgeTo;
 	boolean[] nodesOnQueue;
 	Queue<Integer> nodesToRelax;
-	int cost;
-	Iterable<Edge> cycle;
+//	int cost;
+//	Iterable<Edge> cycle;
 }
