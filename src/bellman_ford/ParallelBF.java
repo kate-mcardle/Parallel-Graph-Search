@@ -6,6 +6,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import auxillary_data_structures.Edge;
 import auxillary_data_structures.Graph;
@@ -48,6 +49,14 @@ public class ParallelBF extends BellmanFord {
             	task.v = v;
             	threadPool.execute(task);
             }
+			try {
+				threadPool.shutdown();
+				// wait until we have finished launching searches of all nodes at this level
+				threadPool.awaitTermination(1, TimeUnit.DAYS);
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
     }
     
