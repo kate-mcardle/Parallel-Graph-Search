@@ -13,17 +13,15 @@ import auxillary_data_structures.Graph;
 
 public class SequentialBF extends BellmanFord {
 	
-    public SequentialBF(Graph graph, int source) {
-        distTo  = new double[graph.n_nodes];
-        edgeTo  = new Edge[graph.n_nodes];
-        nodesOnQueue = new boolean[graph.n_nodes];
-        for (int v = 0; v < graph.n_nodes; v++) {
-            distTo[v] = Double.POSITIVE_INFINITY;
-        }
+    public SequentialBF(Graph graph) {
+    	super(graph);
+    	nodesToRelax = new LinkedList<Integer>();
+    }
+    
+    public void run_bf(int source) {
         distTo[source] = 0.0;
 
         // Bellman-Ford algorithm
-        nodesToRelax = new LinkedList<Integer>();
         nodesToRelax.add(source);
         nodesOnQueue[source] = true;
         while (!nodesToRelax.isEmpty()) {
