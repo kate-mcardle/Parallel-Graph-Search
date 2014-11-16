@@ -52,31 +52,19 @@ public class ParallelBFS implements BreadthFirstSearch {
 		while (!next.isEmpty()) {
 			level++;
 			current = next; // all nodes at this level
-			next = new ConcurrentLinkedQueue<Integer>(); // all nodes at the
-															// next level
+			next.clear();
+//			next = new ConcurrentLinkedQueue<Integer>(); // all nodes at the next level
 			neighborThreadPool = Executors.newFixedThreadPool(num_Threads);
-			while (!current.isEmpty()) { // while we still have nodes to process
-											// at this level
+			while (!current.isEmpty()) { // while we still have nodes to process at this level
 				int node = current.remove(); // pop the next node at this level
 				neighbors = new NeighborExecutor(node);
-				neighborThreadPool.execute(neighbors); // find this node's
-														// neighbors
+				neighborThreadPool.execute(neighbors); // find this node's neighbors
 			}
 			try {
 				neighborThreadPool.shutdown();
-				neighborThreadPool.awaitTermination(1, TimeUnit.DAYS); // wait
-																		// until
-																		// we
-																		// have
-																		// finished
-																		// launching
-																		// searches
-																		// of
-																		// all
-																		// nodes
-																		// at
-																		// this
-																		// level
+				// wait until we have finished launching searches of all nodes at this level
+				neighborThreadPool.awaitTermination(1, TimeUnit.DAYS);
+
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -96,15 +84,8 @@ public class ParallelBFS implements BreadthFirstSearch {
 		public void run() {
 			Set<Edge> out_edges = graph.adjacencyList.get(node);
 			for (Edge e : out_edges) {// for each neighbor of this node
-				if (shortest_hops[e.destination] == Integer.MAX_VALUE) {// if we
-																		// haven't
-																		// discovered
-																		// this
-																		// node
-																		// yet
-					shortest_hops[e.destination] = level;// add it to the queue
-															// of nodes to
-															// investigate
+				if (shortest_hops[e.destination] == Integer.MAX_VALUE) {// if we haven't discovered this node yet
+					shortest_hops[e.destination] = level;// add it to the queue of nodes to investigate
 					next.add(e.destination);// update its shortest_hops
 				}
 			}
