@@ -2,6 +2,7 @@ package bellman_ford;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -14,8 +15,9 @@ import auxillary_data_structures.Graph;
 public class ParallelBF_slow extends BellmanFord {
 	private ExecutorService threadPool;
 	private int n_threads;
+	Queue<Integer> nodesToRelax;
 
-    public ParallelBF_slow(Graph graph, int source, String type, int n_threads) {
+    public ParallelBF_slow(Graph graph, String type, int n_threads) {
     	super(graph);        
         if (type.equals("lock-free")) {
         	nodesToRelax = new ConcurrentLinkedQueue<Integer>();

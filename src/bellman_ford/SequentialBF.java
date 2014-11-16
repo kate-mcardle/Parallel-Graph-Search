@@ -1,6 +1,7 @@
 package bellman_ford;
 
 import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 import auxillary_data_structures.Edge;
@@ -13,6 +14,8 @@ import auxillary_data_structures.Graph;
 
 public class SequentialBF extends BellmanFord {
 	
+	Queue<Integer> nodesToRelax;
+	
     public SequentialBF(Graph graph) {
     	super(graph);
     	nodesToRelax = new LinkedList<Integer>();
@@ -24,11 +27,14 @@ public class SequentialBF extends BellmanFord {
         // Bellman-Ford algorithm
         nodesToRelax.add(source);
         nodesOnQueue[source] = true;
+        int iter = 0;
         while (!nodesToRelax.isEmpty()) {
             int v = nodesToRelax.remove();
             nodesOnQueue[v] = false;
             relax(graph, v);
+            iter++;
         }
+        System.out.println("# iterations = " + iter);
     }
 
     // relax vertex v and put other endpoints on queue if changed

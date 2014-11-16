@@ -10,17 +10,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import auxillary_data_structures.Edge;
 import auxillary_data_structures.Graph;
 
-public class ParallelBF extends BellmanFord {
+public class ParallelBF_locks extends BellmanFord {
 	private ExecutorService threadPool;
 	private int n_threads;
+	private ReentrantLock[] locks;
 	Queue<Integer> nodesToRelax;
 	
-	public ParallelBF(Graph graph, String type, int n_threads) {
+	public ParallelBF_locks(Graph graph, String type, int n_threads) {
 		super(graph);
         if (type.equals("lock-free")) {
         	nodesToRelax = new ConcurrentLinkedQueue<Integer>();
@@ -33,6 +36,10 @@ public class ParallelBF extends BellmanFord {
         	System.exit(-1);
         }
         this.n_threads = n_threads;
+        this.locks = new ReentrantLock[graph.n_nodes];
+        for (int i = 0; i < graph.n_nodes; i++) {
+        	locks[i] = new ReentrantLock();
+        }
 	}
 
     public void run_bf(int source) {
@@ -47,30 +54,19 @@ public class ParallelBF extends BellmanFord {
 
         // Bellman-Ford algorithm
         nodesToRelax.add(source);
-        while (!nodesToRelax.isEmpty()) {
-            int v = nodesToRelax.remove();
-            int i = 0;
-            List<Future<Double> > futures = new ArrayList<Future<Double> >();
+        while (!nodesToRelax.isEmpty() || ( ((ThreadPoolExecutor) threadPool).getActiveCount() > 0)) {
+            while (nodesToRelax.isEmpty()) { }
+        	int v = nodesToRelax.remove();
+//            int i = 0;
             for (Edge e : graph.adjacencyList.get(v)) {
-            	if (i >= tasks.size()) {
-            		tasks.add(new Task());
-            	}
-            	Task task = tasks.get(i++);
+//            	if (i >= tasks.size()) {
+//            		tasks.add(new Task());
+//            	}
+//            	Task task = tasks.get(i++);
+            	Task task = new Task();
             	task.e = e;
             	task.v = v;
-            	futures.add(threadPool.submit(task));
-            }
-            // "Barrier"
-            for (int j = 0; j < i; j++) {
-            	try {
-					futures.get(j).get();
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (ExecutionException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+            	threadPool.execute(task);
             }
         }
         
@@ -83,22 +79,30 @@ public class ParallelBF extends BellmanFord {
 		}
     }
     
-    public class Task implements Callable<Double> {
+    public class Task implements Runnable {
     	
     	Edge e;
     	int v;
 
 		@Override
-		public Double call() {
+		public void run() {
             int w = e.destination;
-            if (distTo[w] > distTo[v] + e.weight) {
-                distTo[w] = distTo[v] + e.weight;
-                edgeTo[w] = e;
+            locks[w].lock();
+            boolean flag = false;
+            try {
+                if (distTo[w] > distTo[v] + e.weight) {
+                    distTo[w] = distTo[v] + e.weight;
+                    edgeTo[w] = e;
+                    flag = true;
+                }
+            } finally {
+            	locks[w].unlock();
+            }
+            if (flag) {
                 if (!nodesToRelax.contains(w)) {
                     nodesToRelax.add(w);
                 }
             }
-            return distTo[w];
 		}
     }
 }

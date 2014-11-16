@@ -10,7 +10,6 @@ public abstract class BellmanFord {
 	double[] distTo;
 	Edge[] edgeTo;
 	boolean[] nodesOnQueue;
-	Queue<Integer> nodesToRelax;
 	
 	public BellmanFord(Graph graph) {
 		this.graph = graph;
