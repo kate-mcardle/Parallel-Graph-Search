@@ -20,11 +20,13 @@ public class ParallelBFS implements BreadthFirstSearch {
 	private Queue<Integer> current;
 	private Queue<Integer> next;
 	private int num_Threads;
+	private String type;
 
 	public ParallelBFS(Graph graph, String type, int num_Threads) {
 		this.graph = graph;
 		this.num_Threads = num_Threads;
 		shortest_hops = new int[graph.n_nodes];
+		this.type = type;
 		if (type.equals("lock-free")) {
 			this.current = new ConcurrentLinkedQueue<Integer>();
 			this.next = new ConcurrentLinkedQueue<Integer>();
@@ -34,6 +36,10 @@ public class ParallelBFS implements BreadthFirstSearch {
 		} else if (type.equals("array-locked")) {
 			this.current = new ArrayBlockingQueue<Integer>(graph.n_nodes);
 			this.next = new ArrayBlockingQueue<Integer>(graph.n_nodes);
+		}
+		else {
+        	System.out.println("Not an implementation!");
+        	System.exit(-1);
 		}
 	}
 
@@ -52,8 +58,17 @@ public class ParallelBFS implements BreadthFirstSearch {
 		while (!next.isEmpty()) {
 			level++;
 			current = next; // all nodes at this level
-			next.clear();
-//			next = new ConcurrentLinkedQueue<Integer>(); // all nodes at the next level
+			if (type.equals("lock-free")) {
+				this.next = new ConcurrentLinkedQueue<Integer>();
+			} else if (type.equals("reentrant-locked")) {
+				this.next = new LockBasedQueue<Integer>();
+			} else if (type.equals("array-locked")) {
+				this.next = new ArrayBlockingQueue<Integer>(graph.n_nodes);
+			}
+			else {
+	        	System.out.println("Not an implementation!");
+	        	System.exit(-1);
+			}
 			neighborThreadPool = Executors.newFixedThreadPool(num_Threads);
 			while (!current.isEmpty()) { // while we still have nodes to process at this level
 				int node = current.remove(); // pop the next node at this level
