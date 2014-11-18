@@ -1,7 +1,5 @@
 package bellman_ford;
 
-import java.util.Queue;
-
 import auxillary_data_structures.Edge;
 import auxillary_data_structures.Graph;
 
@@ -22,9 +20,5 @@ public abstract class BellmanFord {
 	}
 	
 	public abstract void run_bf(int source);
-	
 
-	
-//	int cost;
-//	Iterable<Edge> cycle;
 }
