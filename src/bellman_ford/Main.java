@@ -12,59 +12,79 @@ import auxillary_data_structures.Graph;
 public class Main {
 	public static void main(String[] args) {
 		String[] search_types = { "lock-based", "lock-free" };
-		double[] graph_density = {0.00015, 0.000015, 0.000015  };
-		int[] num_nodes = { 100000, 500000,1000000 };
-		// building graphs with different densities and nodes
-		for (int h = 0; h < 3; h++) { 
-			double t_graph = 0, t_seq = 0;
-			long t = System.nanoTime();
-			BellmanFord bf_parallel =null; 
-			BellmanFord bf_seq = null;
-			
-			Graph g = new Graph(graph_density[h], num_nodes[h]);
-			t_graph += (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
-			
+		double[] graph_density = { 0.00015, 0.000015 };
+		int[] num_nodes = { 500000, 1000000 };
+		int source_node = 2;
+		
+		/** Change for LRC machines! **/
+		int max_threads = 7;
+		int max_reps = 1;
+		int n_graphs_to_evaluate = 5;
+		String[] paths = {"src/data/soc-pokec-relationships.txt","src/data/wiki-Talk.txt","src/data/as-skitter.txt"};
+		/** End change for LRC machines! **/
+		
+		int[] graph_sizes ={1632803,2394385,1696415};
+		boolean[] isZeroIndexed = {false, true,true};
+		
+		for(int i = 0; i < n_graphs_to_evaluate;i++){
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-			System.out.println("Graph density " + graph_density[h] + "  Graph Size " + num_nodes[h] );
+			long t;
+			double t_graph;
+			Graph g = null;
+			if (i < paths.length) {
+				System.out.println("Evaluating graph: " + paths[i] + " ~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				t = System.nanoTime();
+				g = new Graph(paths[i],isZeroIndexed[i],graph_sizes[i]);
+				t_graph = (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
+			} else {
+				t = System.nanoTime();
+				g = new Graph(graph_density[i-paths.length], num_nodes[i-paths.length]);
+				t_graph = (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
+				System.out.println("Evaluating randomly generated graph of size " + g.n_nodes + " and # edges " + g.n_edges + " ~~~~~~~~~~~~~~");
+			}
 			System.out.println("Time to build graph = " + t_graph + " seconds");
 			
+			BellmanFord bf_seq = null;
+			BellmanFord bf_par = null;
+			
 			// Executing Sequential Algorithm 10 times
-			for (int k = 0; k < 10; k++) {
+			double t_seq = 0.0;
+			int n_reps;
+			for (n_reps = 0; n_reps < max_reps; n_reps++) {
 				bf_seq = new SequentialBF(g);
 				t = System.nanoTime();
-				bf_seq.run_bf(0);
+				bf_seq.run_bf(source_node);
 				t_seq += (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
 			}
-			double t_seq_ave = t_seq / 10.0;
+			double t_seq_ave = t_seq / n_reps;
 			System.out.println("Average time for sequential Bellman Ford = " + t_seq_ave + " seconds");
 			
 			// Parallel Algorithm Execution
+			System.out.println("Parallel Executions: ~~~~~~~~~~~~~~~~~~~~~~~~~");
 			for (String type : search_types) { // Algorithm types
 				System.out.println(" ---------------------------------------------------");
-				System.out.println("Search Algorithm " + type);
+				System.out.println("Data structure: " + type);
 
-				for (int j = 1; j <= 6; j++) {// Number of threads
-					//System.out.println("# Thread(s) " + j);
+				for (int n_threads = 1; n_threads <= max_threads; n_threads++) {// Number of threads
 					double t_par = 0.0;
-					//Averaging the execution time
-					for(int k=0; k<10;k++){
+					for (n_reps = 0; n_reps < max_reps; n_reps++) {
 						if (type.equals("lock-based")) {
-							bf_parallel = new ParallelBF_locking(g, j);
+							bf_par = new ParallelBF_locking(g, n_threads);
 						}
 						else if (type.equals("lock-free")) {
-							bf_parallel = new ParallelBF_lockfree(g, j);
+							bf_par = new ParallelBF_lockfree(g, n_threads);
 						}
 						else {
 							System.out.println("Not a valid implementation!");
 							System.exit(-1);
 						}
 						long t_par_start = System.nanoTime();
-						bf_parallel.run_bf(0);
+						bf_par.run_bf(source_node);
 						t_par += (System.nanoTime() - t_par_start + 0.0) / (Math.pow(10, 9));
 					}
-					System.out.println("# Thread(s) " + j+" Time = " + t_par / 10 + " seconds");
-					
-					if(!(Arrays.equals(bf_parallel.getDistances(), bf_seq.getDistances()))){
+					System.out.println(n_threads + " thread time = " + t_par / n_reps + " seconds");
+
+					if(!(Arrays.equals(bf_par.getDistances(), bf_seq.getDistances()))){
 						System.out.println("Bug!! Not a match");
 					}
 				}	
