@@ -23,6 +23,9 @@ public class ParallelBF_twoQueues extends BellmanFord {
 	private Queue<Integer> next;
 	private ReentrantLock[] locks;
 	private String type;
+	double[] distTo;
+	Edge[] edgeTo;
+	boolean[] nodesOnQueue;
 	
 	public ParallelBF_twoQueues(Graph graph, String type, int n_threads) {
 		super(graph);
@@ -44,6 +47,12 @@ public class ParallelBF_twoQueues extends BellmanFord {
         for (int i = 0; i < graph.n_nodes; i++) {
         	locks[i] = new ReentrantLock();
         }
+	    distTo  = new double[graph.n_nodes];
+	    edgeTo  = new Edge[graph.n_nodes];
+	    nodesOnQueue = new boolean[graph.n_nodes];
+	    for (int v = 0; v < graph.n_nodes; v++) {
+	        distTo[v] = Double.POSITIVE_INFINITY;
+	    }
 	}
 
     public void run_bf(int source) {
@@ -136,4 +145,14 @@ public class ParallelBF_twoQueues extends BellmanFord {
             return true;
 		}
     }
+
+	@Override
+	public double[] getDistances() {
+		return distTo;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edgeTo;
+	}
 }

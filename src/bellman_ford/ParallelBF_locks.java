@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,6 +19,9 @@ public class ParallelBF_locks extends BellmanFord {
 	private int n_threads;
 	private ReentrantLock[] locks;
 	Queue<Integer> nodesToRelax;
+	double[] distTo;
+	Edge[] edgeTo;
+	boolean[] nodesOnQueue;
 	
 	public ParallelBF_locks(Graph graph, String type, int n_threads) {
 		super(graph);
@@ -40,6 +40,12 @@ public class ParallelBF_locks extends BellmanFord {
         for (int i = 0; i < graph.n_nodes; i++) {
         	locks[i] = new ReentrantLock();
         }
+	    distTo  = new double[graph.n_nodes];
+	    edgeTo  = new Edge[graph.n_nodes];
+	    nodesOnQueue = new boolean[graph.n_nodes];
+	    for (int v = 0; v < graph.n_nodes; v++) {
+	        distTo[v] = Double.POSITIVE_INFINITY;
+	    }
 	}
 
     public void run_bf(int source) {
@@ -57,6 +63,7 @@ public class ParallelBF_locks extends BellmanFord {
         while (!nodesToRelax.isEmpty() || ( ((ThreadPoolExecutor) threadPool).getActiveCount() > 0)) {
             while (nodesToRelax.isEmpty()) { }
         	int v = nodesToRelax.remove();
+//        	threadPool.execute(task);
 //            int i = 0;
             for (Edge e : graph.adjacencyList.get(v)) {
 //            	if (i >= tasks.size()) {
@@ -105,4 +112,14 @@ public class ParallelBF_locks extends BellmanFord {
             }
 		}
     }
+
+	@Override
+	public double[] getDistances() {
+		return distTo;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edgeTo;
+	}
 }

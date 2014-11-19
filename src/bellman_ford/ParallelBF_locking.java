@@ -10,6 +10,9 @@ import auxillary_data_structures.Graph;
 public class ParallelBF_locking extends BellmanFord {
 	private int n_threads;
 	MyBlockingQueue<Integer> nodesToRelax;
+	double[] distTo;
+	Edge[] edgeTo;
+	boolean[] nodesOnQueue;
 	ReentrantLock[] locks;
 	ReentrantLock waitingLock = new ReentrantLock();
 	Condition allThreadsWaiting = waitingLock.newCondition();
@@ -18,6 +21,12 @@ public class ParallelBF_locking extends BellmanFord {
 		super(graph);
         nodesToRelax = new MyBlockingQueue<Integer>(graph.n_nodes, n_threads, waitingLock, allThreadsWaiting);
         this.n_threads = n_threads;
+	    distTo  = new double[graph.n_nodes];
+	    edgeTo  = new Edge[graph.n_nodes];
+	    nodesOnQueue = new boolean[graph.n_nodes];
+	    for (int v = 0; v < graph.n_nodes; v++) {
+	        distTo[v] = Double.POSITIVE_INFINITY;
+	    }
         this.locks = new ReentrantLock[graph.n_nodes];
         for (int i = 0; i < graph.n_nodes; i++) {
         	locks[i] = new ReentrantLock();
@@ -33,10 +42,10 @@ public class ParallelBF_locking extends BellmanFord {
         // Fill nodesToRelax queue with some nodes we know must be relaxed
         nodesToRelax.add(source);
         nodesOnQueue[source] = true;
-        for (Edge e : graph.adjacencyList.get(source)) {
-        	nodesToRelax.add(e.destination);
-        	nodesOnQueue[e.destination] = true;
-        }
+//        for (Edge e : graph.adjacencyList.get(source)) {
+//        	nodesToRelax.add(e.destination);
+//        	nodesOnQueue[e.destination] = true;
+//        }
         // Start threads
         for (int i = 0; i < n_threads; i++) {
         	threads[i].start();
@@ -75,8 +84,7 @@ public class ParallelBF_locking extends BellmanFord {
 				try {
 					u = q.take();
 				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-//					e1.printStackTrace();
+					// main thread will interrupt threads when it receives signal that all threads are waiting on empty queue
 					break;
 				}
 				locks[u].lock();
@@ -105,4 +113,14 @@ public class ParallelBF_locking extends BellmanFord {
     		}
     	}
     }
+
+	@Override
+	public double[] getDistances() {
+		return distTo;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edgeTo;
+	}
 }

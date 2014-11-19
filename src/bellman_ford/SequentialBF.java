@@ -15,10 +15,19 @@ import auxillary_data_structures.Graph;
 public class SequentialBF extends BellmanFord {
 	
 	Queue<Integer> nodesToRelax;
+	double[] distTo;
+	Edge[] edgeTo;
+	boolean[] nodesOnQueue;
 	
     public SequentialBF(Graph graph) {
     	super(graph);
     	nodesToRelax = new LinkedList<Integer>();
+	    distTo  = new double[graph.n_nodes];
+	    edgeTo  = new Edge[graph.n_nodes];
+	    nodesOnQueue = new boolean[graph.n_nodes];
+	    for (int v = 0; v < graph.n_nodes; v++) {
+	        distTo[v] = Double.POSITIVE_INFINITY;
+	    }
     }
     
     public void run_bf(int source) {
@@ -27,14 +36,14 @@ public class SequentialBF extends BellmanFord {
         // Bellman-Ford algorithm
         nodesToRelax.add(source);
         nodesOnQueue[source] = true;
-        int iter = 0;
+//        int iter = 0;
         while (!nodesToRelax.isEmpty()) {
             int v = nodesToRelax.remove();
             nodesOnQueue[v] = false;
             relax(graph, v);
-            iter++;
+//            iter++;
         }
-        System.out.println("# iterations = " + iter);
+//        System.out.println("# iterations = " + iter);
     }
 
     // relax vertex v and put other endpoints on queue if changed
@@ -68,4 +77,14 @@ public class SequentialBF extends BellmanFord {
         }
         return path;
     }
+
+	@Override
+	public double[] getDistances() {
+		return distTo;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edgeTo;
+	}
 }

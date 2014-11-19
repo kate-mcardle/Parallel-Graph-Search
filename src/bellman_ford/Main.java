@@ -12,8 +12,8 @@ import auxillary_data_structures.Graph;
 public class Main {
 	public static void main(String[] args) {
 		String[] search_types = { "lock-based", "lock-free" };
-		double[] graph_density = {0.00015, 0.000015, 0.0015  };
-		int[] num_nodes = { 10000, 20000,30000 };
+		double[] graph_density = {0.00015, 0.000015, 0.000015  };
+		int[] num_nodes = { 100000, 500000,1000000 };
 		// building graphs with different densities and nodes
 		for (int h = 0; h < 3; h++) { 
 			double t_graph = 0, t_seq = 0;
@@ -48,51 +48,30 @@ public class Main {
 					double t_par = 0.0;
 					//Averaging the execution time
 					for(int k=0; k<10;k++){
-						bf_parallel = new ParallelBF(g,type, j);
+						if (type.equals("lock-based")) {
+							bf_parallel = new ParallelBF_locking(g, j);
+						}
+						else if (type.equals("lock-free")) {
+							bf_parallel = new ParallelBF_lockfree(g, j);
+						}
+						else {
+							System.out.println("Not a valid implementation!");
+							System.exit(-1);
+						}
 						long t_par_start = System.nanoTime();
 						bf_parallel.run_bf(0);
 						t_par += (System.nanoTime() - t_par_start + 0.0) / (Math.pow(10, 9));
 					}
 					System.out.println("# Thread(s) " + j+" Time = " + t_par / 10 + " seconds");
-
 					
-					if(!(Arrays.equals(bf_parallel.distTo, bf_seq.distTo) && Arrays.equals(bf_parallel.edgeTo, bf_seq.edgeTo))){
+					if(!(Arrays.equals(bf_parallel.getDistances(), bf_seq.getDistances()))){
 						System.out.println("Bug!! Not a match");
 					}
 				}	
 				System.out.println(" ---------------------------------------------------");
 			}
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-		}
-	
-//		long t = System.nanoTime();
-//		Graph g = new Graph(0.000015, 1000000);
-////		System.out.println("Graph\n"+ g.adjacencyList);
-//		double t_graph = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
-//		System.out.println("Time to build graph = " + t_graph + " seconds");
-	//
-//		t = System.nanoTime();
-//		BellmanFord bf_seq = new SequentialBF(g, 0);
-//		double t_seq = (System.nanoTime() - t + 0.0)/(Math.pow(10,9));
-//		System.out.println("Time for sequential Bellman Ford = " + t_seq + " seconds");
-//		System.out.println("Distances to nodes: " + Arrays.toString(bf_seq.distTo));
-//		System.out.println("Edges: " + Arrays.toString(bf_seq.edgeTo));
-		
-//		if (evaluate_search(shortest_hops_seq, "lock-based", g, 0)) {
-//			System.out.println("match!");
-//		} else {
-//			System.out.println("Bug!! Not a match");
-//		}
-	//	
-//		if (evaluate_search(shortest_hops_seq, "lock-free", g, 0)) {
-//			System.out.println("match!");
-//		} else {
-//			System.out.println("Bug!! Not a match");
-//		}
-		
-	
-	
-	
+		}	
 	}	
 }
 

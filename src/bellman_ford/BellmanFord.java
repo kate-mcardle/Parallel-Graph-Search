@@ -5,20 +5,15 @@ import auxillary_data_structures.Graph;
 
 public abstract class BellmanFord {
 	Graph graph;
-	double[] distTo;
-	Edge[] edgeTo;
-	boolean[] nodesOnQueue;
+
 	
 	public BellmanFord(Graph graph) {
 		this.graph = graph;
-	    distTo  = new double[graph.n_nodes];
-	    edgeTo  = new Edge[graph.n_nodes];
-	    nodesOnQueue = new boolean[graph.n_nodes];
-	    for (int v = 0; v < graph.n_nodes; v++) {
-	        distTo[v] = Double.POSITIVE_INFINITY;
-	    }
 	}
 	
 	public abstract void run_bf(int source);
+	
+	public abstract double[] getDistances();
+	public abstract Edge[] getEdges();
 
 }

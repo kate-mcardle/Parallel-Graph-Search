@@ -16,6 +16,9 @@ public class ParallelBF_slow extends BellmanFord {
 	private ExecutorService threadPool;
 	private int n_threads;
 	Queue<Integer> nodesToRelax;
+	double[] distTo;
+	Edge[] edgeTo;
+	boolean[] nodesOnQueue;
 
     public ParallelBF_slow(Graph graph, String type, int n_threads) {
     	super(graph);        
@@ -30,6 +33,12 @@ public class ParallelBF_slow extends BellmanFord {
         	System.exit(-1);
         }
         this.n_threads = n_threads;
+	    distTo  = new double[graph.n_nodes];
+	    edgeTo  = new Edge[graph.n_nodes];
+	    nodesOnQueue = new boolean[graph.n_nodes];
+	    for (int v = 0; v < graph.n_nodes; v++) {
+	        distTo[v] = Double.POSITIVE_INFINITY;
+	    }        
     }
     
 	@Override
@@ -83,4 +92,14 @@ public class ParallelBF_slow extends BellmanFord {
             }
 		}
     }
+
+	@Override
+	public double[] getDistances() {
+		return distTo;
+	}
+
+	@Override
+	public Edge[] getEdges() {
+		return edgeTo;
+	}
 }
