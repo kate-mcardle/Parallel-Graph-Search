@@ -19,7 +19,7 @@ public class Graph {
 	
 	public Map<Integer, Set<Edge>> adjacencyList;
 	public int n_nodes;
-	//public int n_edges;
+	public int n_edges;
 
 	public Graph(int n_nodes) {
 		this.n_nodes = n_nodes;
@@ -36,7 +36,7 @@ public class Graph {
 		for (int i = 0; i < n_nodes; i++) {
 			adjacencyList.put(i, new HashSet<Edge>());
 		}
-		int n_edges = (int) (density * n_nodes * (n_nodes - 1));
+		n_edges = (int) (density * n_nodes * (n_nodes - 1));
 		int count = 0;
 		int i, j;
 		Random rgen = new Random();
@@ -94,6 +94,7 @@ public class Graph {
 			}
 			n_nodes = size;
 			System.out.println(" Time in ms "+ String.valueOf(System.currentTimeMillis() - start));
+			br.close();
 			//System.out.println(sb.toString());
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
