@@ -25,25 +25,28 @@ public class Main {
 		boolean[] isZeroIndexed = {false, true,true};
 		
 		for(int i = 0; i < n_graphs_to_evaluate;i++){
-			long t = System.nanoTime();
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
+			long t;
+			double t_graph;
 			Graph g = null;
 			if (i < paths.length) {
-				g = new Graph(paths[i],isZeroIndexed[i],graph_sizes[i]);
 				System.out.println("Evaluating graph: " + paths[i] + " ~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				t = System.nanoTime();
+				g = new Graph(paths[i],isZeroIndexed[i],graph_sizes[i]);
+				t_graph = (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
 			} else {
+				t = System.nanoTime();
 				g = new Graph(graph_density[i-paths.length], num_nodes[i-paths.length]);
+				t_graph = (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
 				System.out.println("Evaluating randomly generated graph of size " + g.n_nodes + " and # edges " + g.n_edges + " ~~~~~~~~~~~~~~");
 			}
-			double t_graph = (System.nanoTime() - t + 0.0) / (Math.pow(10, 9));
-			double t_seq = 0.0;
-			int[] shortest_hops_seq = null;
-			int[] shortest_hops_parallel = null;
-
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n");
-			//System.out.println("Graph density " + graph_density[h] + "  Graph Size " + num_nodes[h] );
 			System.out.println("Time to build graph = " + t_graph + " seconds");
 
+			int[] shortest_hops_seq = null;
+			int[] shortest_hops_parallel = null;
+			
 			// Executing Sequential Algorithm 10 times
+			double t_seq = 0.0;
 			int n_reps;
 			for (n_reps = 0; n_reps < max_reps; n_reps++) {
 				// Sequential Algorithm Execution
