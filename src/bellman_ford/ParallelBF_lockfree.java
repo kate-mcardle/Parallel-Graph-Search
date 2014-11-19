@@ -71,7 +71,7 @@ public class ParallelBF_lockfree extends BellmanFord {
     }
     
     public class BFThread extends Thread {
-    	private volatile Queue<Integer> q;
+    	private Queue<Integer> q;
     	private int n_threads;
     	private AtomicInteger n_threads_waiting;
     	

@@ -72,7 +72,7 @@ public class ParallelBF_locking extends BellmanFord {
     }
     
     public class BFThread extends Thread {
-    	private volatile BlockingQueue<Integer> q;
+    	private BlockingQueue<Integer> q;
     	
     	public BFThread(BlockingQueue<Integer> q) {
     		this.q = q;
