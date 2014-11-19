@@ -17,13 +17,14 @@ public class Main {
 		/** Change for LRC machines! **/
 		int max_threads = 7;
 		int max_reps = 1;
+		int n_graphs_to_evaluate = 5;
 		String[] paths = {"src/data/soc-pokec-relationships.txt","src/data/wiki-Talk.txt","src/data/as-skitter.txt"};
 		/** End change for LRC machines! **/
 		
 		int[] graph_sizes ={1632803,2394385,1696415};
 		boolean[] isZeroIndexed = {false, true,true};
 		
-		for(int i = 0; i < 5;i++){
+		for(int i = 0; i < n_graphs_to_evaluate;i++){
 			long t = System.nanoTime();
 			Graph g = null;
 			if (i < paths.length) {
