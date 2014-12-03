@@ -11,11 +11,12 @@ import auxillary_data_structures.Graph;
 
 public class Main {
 	public static void main(String[] args) {
-		demo();
+		demo_BF();
 //		evaluate_all();
 	}	
 	
-	public static void demo() {
+	public static void demo_BF() {
+		System.out.println("------------------ Bellman Ford ------------------");
 //		double demo_time = System.nanoTime();
 		String[] search_types = { "lock-based", "lock-free" };
 		int source_node = 2;

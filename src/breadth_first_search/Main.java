@@ -8,7 +8,8 @@ public class Main {
 
 	static int count;
 
-	public static void demo() {
+	public static void demo_BFS() {
+		System.out.println("------------------ Breadth First Search ------------------");
 		String[] search_types = { "array-locked", "lock-free" };
 		int max_threads = 7;
 		int max_reps = 1;
@@ -88,7 +89,7 @@ public class Main {
 	}
 
 	public static void main(String[] args) {
-		demo();
+		demo_BFS();
 		// evaluate all.
 	}
 
