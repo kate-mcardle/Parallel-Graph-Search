@@ -93,7 +93,7 @@ public class Graph {
 				line = br.readLine();
 			}
 			n_nodes = size;
-			System.out.println(" Time in ms "+ String.valueOf(System.currentTimeMillis() - start));
+//			System.out.println(" Time in ms "+ String.valueOf(System.currentTimeMillis() - start));
 			br.close();
 			//System.out.println(sb.toString());
 		} catch (FileNotFoundException e) {
